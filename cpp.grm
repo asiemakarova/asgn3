@@ -44,7 +44,8 @@
 (*  The first non-terminal must yield a value of type Ast.program.
 *)
 pgm :  (* Ast.program *)
-  => (Ast.PNone)
+       => 
+       
   ;
 
 (*  You must have a non-terminal named exp, and it must yield a value of type

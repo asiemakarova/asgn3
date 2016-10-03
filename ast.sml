@@ -24,6 +24,10 @@ struct
   *   
   *   You must have this type in your solution.  Do not use the PNone
   *   constructor; it is here solely so that this skeleton file compiles.
+  That means defining
+the Ast.pgm type. I suggest making Ast.pgm a list of definitions, where a definition is
+defined by some datatype definition that ought to include some sort of constructor like
+DDecl for a variable declaration.
   *)
   (*datatype program = Func of fun
                     | Comment of 
@@ -32,7 +36,15 @@ struct
                     | PreproDir of string
                     | LongProgram of program+
 *)
-  datatype program = PNone
+  
+  type id = string
+  datatype defn = DDecl of id*exp
+  datatype program = Pgm of defn list
+(*  datatype ctype = CString of string
+                  |CInt of int
+                  |
+ *)
+
 
   (*  ********
   *   'a -> string conversion functions.
@@ -69,6 +81,6 @@ struct
     | Func(p) => "Func(" 
     | LongProgram(p) => "LongProgram(" ^ programToString p ^ ")"
 *)
-  fun programToString (p : program) : string =
-    ""
+
+
 end
