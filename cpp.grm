@@ -1,0 +1,62 @@
+(*  COMP 321 Homework 3:  Lexer and parser for a fragment of C.
+*
+*   ml-antlr specification.
+*
+*   N. Danner
+*   Fall 2016
+*)
+
+(*  The base of the generated structures and functors must be CPPGrm, so the
+*   parsing functor will be named CPPGrmParseFn and the token structure will be
+*   named CPPGrmTokens.
+*)
+%name CPPGrm ;
+
+%defs (
+) ;
+
+(* You are required to have a non-terminal exp, which is the starting
+*  non-terminal for expressions.  Normally ml-antlr produces only a parsing
+*  function named parse, which starts the parse with the first non-terminal for
+*  which there is a production.  This directive ensures that ml-antlr also
+*  produces a parsing function called parseexp, which attempts to derive the
+*  token sequence starting with the exp non-terminal rather than the pgm
+*  non-terminal.  Note that by having this directive, the exp non-terminal
+*  must not be the first non-terminal.
+*)
+%entry exp ;
+
+(*  You must define your tokens as part of the grammar file.  Do not define an
+*   EOF token; ml-antlr will add it to the token datatype for you.  Delete these
+*   two tokens and define your own; they are present here solely to ensure that
+*   the code generated from this specification compiles (it seems that you need
+*   at least two tokens).
+*)
+%tokens : 
+    NUM of int
+  | ID of string
+  | STRING of string
+  | PLUS
+  | TIMES
+
+  ;
+
+(*  The first non-terminal must yield a value of type Ast.program.
+*)
+pgm :  (* Ast.program *)
+  => (Ast.PNone)
+  ;
+
+(*  You must have a non-terminal named exp, and it must yield a value of type
+*   Ast.exp.
+*)
+exp :  (*  Ast.exp *)
+  NUM => (Ast.ENum NUM)
+ |STRING => (Ast.EId STRING)
+ |exp PLUS exp => (SOME Ast.EPlus)
+ |exp TIMES exp => (SOME Ast.ETimes)
+
+
+  ;
+
+
