@@ -12,6 +12,8 @@
 *)
 %name CPPGrm ;
 
+change
+
 %defs (
 ) ;
 
@@ -33,7 +35,7 @@
 *   at least two tokens).
 *)
 %tokens : 
-    NUM of int
+    NUM of int hello
   | ID of string
   | STRING of string
   | PLUS
