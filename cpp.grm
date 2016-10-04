@@ -13,6 +13,7 @@
 %name CPPGrm ;
 
 %defs (
+  open Ast
 ) ;
 
 (* You are required to have a non-terminal exp, which is the starting
@@ -49,14 +50,16 @@
 *   Ast.exp.
 *)
 exp :
-      INT => ( Ast.EInt , INT )
-    | STRING => ( Ast.EString, STRING )
-    | exp PLUS exp => ( SOME Ast.EPlus )
-    | exp TIMES exp => ( SOME Ast.ETimes )
+      INT => ( EInt , INT )
+    | STRING => ( EString, STRING )
+    | exp PLUS exp => ( SOME EPlus )
+    | exp TIMES exp => ( SOME ETimes )
     ;
+
+e_at : INT => ()
 
 decl : ID exp SEMICOLON => ( ( ID, exp) )
     ;
 
-pgm : (decl)* => ( Ast.Pgm SR )
+pgm : (decl)* => ( Pgm SR )
     ;
