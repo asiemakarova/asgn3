@@ -31,7 +31,6 @@ defined by some datatype definition that ought to include some sort of construct
 DDecl for a variable declaration.
   *)
 
-
   type id = string
 
   type decl = id*exp

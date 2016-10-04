@@ -44,11 +44,6 @@
 (*  The first non-terminal must yield a value of type Ast.program.
 *)
 
-(*ctype : 
-    NUM => ( Ast.ctype NUM)
-  | STRING => ( Ast.ctype STRING )
-  | ID => ( Ast.ctype ID )*)
-
 
 (*  You must have a non-terminal named exp, and it must yield a value of type
 *   Ast.exp.
@@ -65,14 +60,3 @@ decl : ID exp SEMICOLON => ( ( ID, exp) )
 
 pgm : (decl)* => ( Ast.Pgm SR )
     ;
-
-(*exp :  
-  INT => (Ast.EINT INT)
- |STRING => (Ast.EId STRING)
- |exp PLUS exp => (SOME Ast.EPlus)
- |exp TIMES exp => (SOME Ast.ETimes)
-  ;*)
-
-(*ctype :
-  NUM => ( Ast.CInt NUM )
-  ;*)
