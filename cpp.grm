@@ -56,8 +56,6 @@ exp :
     | exp TIMES exp => ( SOME ETimes )
     ;
 
-e_at : INT => ()
-
 decl : ID exp SEMICOLON => ( ( ID, exp) )
     ;
 
