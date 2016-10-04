@@ -29,20 +29,18 @@ the Ast.pgm type. I suggest making Ast.pgm a list of definitions, where a defini
 defined by some datatype definition that ought to include some sort of constructor like
 DDecl for a variable declaration.
   *)
-  (*datatype program = Func of fun
-                    | Comment of 
-                    | EOLComment of 
-                    | BlockComment of string
-                    | PreproDir of string int x = 7;
-                    | LongProgram of program+
-*)
+
 
   datatype cid = CId of string 
   datatype ctype = CString of string
-                |  CInt of int
+
 
   datatype defn = DDecl of ctype*cid (*where is id defined*)
-  datatype program = Pgm of defn list
+  datatype program = PgmEp of string
+                    | Pgm of defn*program 
+                    | PgmRest of program
+
+  datatype higherProgram = HP of program
 
  
   (*  ********
@@ -71,12 +69,12 @@ DDecl for a variable declaration.
   *   This function is used by the driver program to print the result of
   *   parsing a program.
   *)
+
+
   fun programToString (p : program) : string =
     case p of
-        [] => "Pgm()"
-        | (a,b)::ys => case (a, b) of 
-          (CString(s),CId(i)) => "Pgm(" ^ s ^ " " ^ i ^ ", " ^ (programToString ys)
-          | (CInt(n),CId(i)) => "Pgm(" ^ (Int.toString n) ^ " " ^ i ^ ", " ^ (programToString ys)
+      PgmEp(x) => "Pgm()"
+      |Pgm(DDecl(CString(x),CId(y)),PgmRest(xs)) => "Pgm(" ^ x ^ " " ^ y ^ ", " ^ (programToString (xs))
 
 
 
