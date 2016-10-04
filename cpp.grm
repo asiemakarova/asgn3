@@ -67,7 +67,7 @@ ctype :
   ;
 
 defn : (*Ast.defn*)
-  ctype ID SEMICOLON => ( Ast.DDecl ( ctype , ( Ast.CId ID ) ) ) 
+  ctype ID SEMICOLON => ( Ast.DDecl ( ctype, ( Ast.CId ID ) ) ) 
   ;
 
 pgm :  (* Ast.program *)

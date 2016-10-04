@@ -59,7 +59,7 @@ fun ctype_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos 
 fun ctype_PROD_2_ACT (STRING, STRING_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
   ( Ast.CString STRING)
 fun defn_PROD_1_ACT (ID, SEMICOLON, ctype, ID_SPAN : (Lex.pos * Lex.pos), SEMICOLON_SPAN : (Lex.pos * Lex.pos), ctype_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.DDecl ( ctype , ( Ast.CId ID ) ) )
+  ( Ast.DDecl ( ctype, ( Ast.CId ID ) ) )
 fun pgm_PROD_1_ACT (SR, SR_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
   ( Ast.Pgm SR )
       end (* UserCode *)

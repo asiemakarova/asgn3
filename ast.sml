@@ -71,14 +71,13 @@ DDecl for a variable declaration.
   *   This function is used by the driver program to print the result of
   *   parsing a program.
   *)
- (*) fun programToString (p : program) : string =
+  fun programToString (p : program) : string =
     case p of
-      EOLComment(p) => "EOLComment(" ^ p ^ ")"
-    | BlockComment(p) => "BlockComment(" ^ p ^ ")"
-    | PreproDir(p) => "PreproDir(" ^ p ^ ")"
-    | Func(p) => "Func(" 
-    | LongProgram(p) => "LongProgram(" ^ programToString p ^ ")"
-*)
+        [] => "Pgm()"
+        | (a,b)::ys => case (a, b) of 
+          (CString(s),CId(i)) => "Pgm(" ^ s ^ " " ^ i ^ ", " ^ (programToString ys)
+          | (CInt(n),CId(i)) => "Pgm(" ^ (Int.toString n) ^ " " ^ i ^ ", " ^ (programToString ys)
+
 
 
 end
