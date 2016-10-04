@@ -32,15 +32,12 @@ DDecl for a variable declaration.
 
 
   datatype cid = CId of string 
-  datatype ctype = CString of string
 
 
-  datatype defn = DDecl of ctype*cid (*where is id defined*)
+  datatype defn = DDecl of ctype*cid 
   datatype program = PgmEp of string
                     | Pgm of defn*program 
                     | PgmRest of program
-
-  datatype higherProgram = HP of program
 
  
   (*  ********
@@ -75,7 +72,5 @@ DDecl for a variable declaration.
     case p of
       PgmEp(x) => "Pgm()"
       |Pgm(DDecl(CString(x),CId(y)),PgmRest(xs)) => "Pgm(" ^ x ^ " " ^ y ^ ", " ^ (programToString (xs))
-
-
 
 end

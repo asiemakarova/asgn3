@@ -46,6 +46,12 @@ CPPGrmTokens
       struct
 
 
+fun ctype_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.CInt NUM )
+fun defn_PROD_1_ACT (ID, SEMICOLON, ctype, ID_SPAN : (Lex.pos * Lex.pos), SEMICOLON_SPAN : (Lex.pos * Lex.pos), ctype_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.DDecl ( ctype, ( Ast.CId ID ) ) )
+fun pgm_PROD_1_ACT (SR, SR_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.Pgm SR )
 fun exp_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
   (Ast.ENum NUM)
 fun exp_PROD_2_ACT (STRING, STRING_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
@@ -54,14 +60,6 @@ fun exp_PROD_3_ACT (PLUS, exp1, exp2, PLUS_SPAN : (Lex.pos * Lex.pos), exp1_SPAN
   (SOME Ast.EPlus)
 fun exp_PROD_4_ACT (exp1, exp2, TIMES, exp1_SPAN : (Lex.pos * Lex.pos), exp2_SPAN : (Lex.pos * Lex.pos), TIMES_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
   (SOME Ast.ETimes)
-fun ctype_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.CInt NUM )
-fun ctype_PROD_2_ACT (STRING, STRING_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.CString STRING)
-fun defn_PROD_1_ACT (ID, SEMICOLON, ctype, ID_SPAN : (Lex.pos * Lex.pos), SEMICOLON_SPAN : (Lex.pos * Lex.pos), ctype_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.DDecl ( ctype, ( Ast.CId ID ) ) )
-fun pgm_PROD_1_ACT (SR, SR_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.Pgm SR )
       end (* UserCode *)
 
     structure Err = AntlrErrHandler(
@@ -147,7 +145,7 @@ fun matchNUM strm = (case (lex(strm))
   | _ => fail()
 (* end case *))
 
-val (exp_NT, exp_NT) = 
+val (ctype_NT, exp_NT) = 
 let
 fun exp_NT (strm) = let
       fun exp_PROD_1 (strm) = let
@@ -189,17 +187,24 @@ fun exp_NT (strm) = let
           | _ => fail()
         (* end case *))
       end
+fun ctype_NT (strm) = let
+      val (NUM_RES, NUM_SPAN, strm') = matchNUM(strm)
+      val FULL_SPAN = (#1(NUM_SPAN), #2(NUM_SPAN))
+      in
+        (UserCode.ctype_PROD_1_ACT (NUM_RES, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)),
+          FULL_SPAN, strm')
+      end
 in
-  (exp_NT, exp_NT)
+  (ctype_NT, exp_NT)
 end
-val exp_NT =  fn s => unwrap (Err.launch (eh, lexFn, exp_NT , true) s)
-val exp_NT =  fn s => unwrap (Err.launch (eh, lexFn, exp_NT , true) s)
+val ctype_NT =  fn s => unwrap (Err.launch (eh, lexFn, ctype_NT , true) s)
+val exp_NT =  fn s => unwrap (Err.launch (eh, lexFn, exp_NT , false) s)
 
-in (exp_NT, exp_NT) end
+in (ctype_NT, exp_NT) end
   in
-fun parse lexFn  s = let val (exp_NT, exp_NT) = mk lexFn in exp_NT s end
+fun parse lexFn  s = let val (ctype_NT, exp_NT) = mk lexFn in ctype_NT s end
 
-fun parseexp lexFn  s = let val (exp_NT, exp_NT) = mk lexFn in exp_NT s end
+fun parseexp lexFn  s = let val (ctype_NT, exp_NT) = mk lexFn in exp_NT s end
 
   end
 
