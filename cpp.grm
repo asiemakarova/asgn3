@@ -33,7 +33,7 @@
 *   at least two tokens).
 *)
 %tokens : 
-    NUM of int
+    INT of int
   | ID of string
   | STRING of string
   | PLUS
@@ -53,23 +53,26 @@
 (*  You must have a non-terminal named exp, and it must yield a value of type
 *   Ast.exp.
 *)
+exp :
+      INT => ( Ast.EInt , INT )
+    | STRING => ( Ast.EString, STRING )
+    | exp PLUS exp => ( SOME Ast.EPlus )
+    | exp TIMES exp => ( SOME Ast.ETimes )
+    ;
 
-exp :  (*  Ast.exp *)
-  NUM => (Ast.ENum NUM)
+decl : ID exp SEMICOLON => ( ( ID, exp) )
+    ;
+
+pgm : (decl)* => ( Ast.Pgm SR )
+    ;
+
+(*exp :  
+  INT => (Ast.EINT INT)
  |STRING => (Ast.EId STRING)
  |exp PLUS exp => (SOME Ast.EPlus)
  |exp TIMES exp => (SOME Ast.ETimes)
-  ;
+  ;*)
 
-ctype :
+(*ctype :
   NUM => ( Ast.CInt NUM )
-  ;
-
-defn : (*Ast.defn*)
-  ctype ID SEMICOLON => ( Ast.DDecl ( ctype, ( Ast.CId ID ) ) ) 
-  ;
-
-pgm :  (* Ast.program *)
- (defn)* => ( Ast.Pgm SR )  
-  ;
-
+  ;*)

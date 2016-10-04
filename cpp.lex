@@ -13,8 +13,10 @@
 %let digit = [0-9] ;
 %let num={digit}+ ;
 %let alpha=[a-zA-Z] ;
-%let id={alpha}+ ;
+%let id={alpha}({alpha} | {digit} | _)* ;
 %let ws=[\n\t\ ] ;
+%let string=\"([^"] | "\\\"")*\" ;
+
 
 (*  You might want to add some definitions, but these should be useful. *)
 %defs (
@@ -28,8 +30,9 @@
 "+"               =>	( T.PLUS ) ;
 "*"               =>	( T.TIMES ) ;
 ";"				  =>	( T.SEMICOLON ) ;
-{num}             =>	( T.NUM ( valOf (Int.fromString yytext)) ) ;
+{num}             =>	( T.INT ( valOf (Int.fromString yytext)) ) ;
 {id}              =>	( T.ID yytext ) ;
+{string}		  =>	( T.STRING yytext ) ;
 {ws}              =>	( skip() ) ;
 .                 =>	( raise Fail ( "Unexpected character: " ^ yytext )) ;
 

@@ -14,12 +14,13 @@ struct
   *   You must have this type in your solution.  Do not use the ENone
   *   constructor; it is here solely so that this skeleton file compiles.
   *)
-  datatype exp = ENum of int
-               | EId of string
+  datatype exp = EInt of int
+               | EString of string
                | EPlus of exp*exp
                | ETimes of exp*exp
 (*               | EFunc of exp list
 *)
+
   (*  The type of programs.
   *   
   *   You must have this type in your solution.  Do not use the PNone
@@ -31,18 +32,14 @@ DDecl for a variable declaration.
   *)
 
 
-  datatype cid = CId of string 
-  datatype ctype = CString of string
+  type id = string
 
+  type decl = id*exp
 
-  datatype defn = DDecl of ctype*cid (*where is id defined*)
-  datatype program = PgmEp of string
-                    | Pgm of defn*program 
-                    | PgmRest of program
+  datatype defn = DDecl of decl
 
-  datatype higherProgram = HP of program
+  datatype pgm = Pgm of defn list
 
- 
   (*  ********
   *   'a -> string conversion functions.
   *)
@@ -56,12 +53,12 @@ DDecl for a variable declaration.
         case e of
          EPlus(e0, e1) => 
            "EPlus(" ^ (expToString e0) ^ ", " ^ (expToString e1) ^ ")"
-       | EId(x) => 
-           "EId(" ^ x ^ ")"    
+       | EString(x) => 
+           "EString(" ^ x ^ ")"    
        | ETimes(e0, e1) => 
            "ETimes(" ^ (expToString e0) ^ ", " ^ (expToString e1) ^ ")"
-       | ENum(n) =>
-           "ENum(" ^ (Int.toString n) ^ ")"
+       | EInt(n) =>
+           "EInt(" ^ (Int.toString n) ^ ")"
 
 
   (*  programToString p = a string representation of p.
@@ -70,12 +67,6 @@ DDecl for a variable declaration.
   *   parsing a program.
   *)
 
-
-  fun programToString (p : program) : string =
-    case p of
-      PgmEp(x) => "Pgm()"
-      |Pgm(DDecl(CString(x),CId(y)),PgmRest(xs)) => "Pgm(" ^ x ^ " " ^ y ^ ", " ^ (programToString (xs))
-
-
+  fun programToString ( p : pgm ) : string = "hello"
 
 end

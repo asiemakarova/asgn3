@@ -7,7 +7,7 @@ CPPGrmTokens = struct
       | PLUS
       | STRING of string
       | ID of string
-      | NUM of int
+      | INT of int
 
     val allToks = [EOF, SEMICOLON, TIMES, PLUS]
 
@@ -19,7 +19,7 @@ CPPGrmTokens = struct
   | (PLUS) => "PLUS"
   | (STRING(_)) => "STRING"
   | (ID(_)) => "ID"
-  | (NUM(_)) => "NUM"
+  | (INT(_)) => "INT"
 (* end case *))
     fun isKW tok =
 (case (tok)
@@ -29,7 +29,7 @@ CPPGrmTokens = struct
   | (PLUS) => false
   | (STRING(_)) => false
   | (ID(_)) => false
-  | (NUM(_)) => false
+  | (INT(_)) => false
 (* end case *))
 
   fun isEOF EOF = true
@@ -46,20 +46,16 @@ CPPGrmTokens
       struct
 
 
-fun exp_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  (Ast.ENum NUM)
+fun exp_PROD_1_ACT (INT, INT_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.EInt , INT )
 fun exp_PROD_2_ACT (STRING, STRING_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  (Ast.EId STRING)
+  ( Ast.EString, STRING )
 fun exp_PROD_3_ACT (PLUS, exp1, exp2, PLUS_SPAN : (Lex.pos * Lex.pos), exp1_SPAN : (Lex.pos * Lex.pos), exp2_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  (SOME Ast.EPlus)
+  ( SOME Ast.EPlus )
 fun exp_PROD_4_ACT (exp1, exp2, TIMES, exp1_SPAN : (Lex.pos * Lex.pos), exp2_SPAN : (Lex.pos * Lex.pos), TIMES_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  (SOME Ast.ETimes)
-fun ctype_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.CInt NUM )
-fun ctype_PROD_2_ACT (STRING, STRING_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.CString STRING)
-fun defn_PROD_1_ACT (ID, SEMICOLON, ctype, ID_SPAN : (Lex.pos * Lex.pos), SEMICOLON_SPAN : (Lex.pos * Lex.pos), ctype_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  ( Ast.DDecl ( ctype, ( Ast.CId ID ) ) )
+  ( SOME Ast.ETimes )
+fun decl_PROD_1_ACT (ID, exp, SEMICOLON, ID_SPAN : (Lex.pos * Lex.pos), exp_SPAN : (Lex.pos * Lex.pos), SEMICOLON_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( ( ID, exp) )
 fun pgm_PROD_1_ACT (SR, SR_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
   ( Ast.Pgm SR )
       end (* UserCode *)
@@ -142,8 +138,8 @@ fun matchID strm = (case (lex(strm))
  of (Tok.ID(x), span, strm') => (x, span, strm')
   | _ => fail()
 (* end case *))
-fun matchNUM strm = (case (lex(strm))
- of (Tok.NUM(x), span, strm') => (x, span, strm')
+fun matchINT strm = (case (lex(strm))
+ of (Tok.INT(x), span, strm') => (x, span, strm')
   | _ => fail()
 (* end case *))
 
@@ -151,10 +147,10 @@ val (exp_NT, exp_NT) =
 let
 fun exp_NT (strm) = let
       fun exp_PROD_1 (strm) = let
-            val (NUM_RES, NUM_SPAN, strm') = matchNUM(strm)
-            val FULL_SPAN = (#1(NUM_SPAN), #2(NUM_SPAN))
+            val (INT_RES, INT_SPAN, strm') = matchINT(strm)
+            val FULL_SPAN = (#1(INT_SPAN), #2(INT_SPAN))
             in
-              (UserCode.exp_PROD_1_ACT (NUM_RES, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)),
+              (UserCode.exp_PROD_1_ACT (INT_RES, INT_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)),
                 FULL_SPAN, strm')
             end
       fun exp_PROD_2 (strm) = let
@@ -185,7 +181,7 @@ fun exp_NT (strm) = let
       in
         (case (lex(strm))
          of (Tok.STRING(_), _, strm') => exp_PROD_2(strm)
-          | (Tok.NUM(_), _, strm') => exp_PROD_1(strm)
+          | (Tok.INT(_), _, strm') => exp_PROD_1(strm)
           | _ => fail()
         (* end case *))
       end
