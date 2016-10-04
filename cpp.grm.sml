@@ -2,17 +2,19 @@ structure
 CPPGrmTokens = struct
 
     datatype token = EOF
+      | SEMICOLON
       | TIMES
       | PLUS
       | STRING of string
       | ID of string
       | NUM of int
 
-    val allToks = [EOF, TIMES, PLUS]
+    val allToks = [EOF, SEMICOLON, TIMES, PLUS]
 
     fun toString tok =
 (case (tok)
  of (EOF) => "EOF"
+  | (SEMICOLON) => "SEMICOLON"
   | (TIMES) => "TIMES"
   | (PLUS) => "PLUS"
   | (STRING(_)) => "STRING"
@@ -22,6 +24,7 @@ CPPGrmTokens = struct
     fun isKW tok =
 (case (tok)
  of (EOF) => false
+  | (SEMICOLON) => false
   | (TIMES) => false
   | (PLUS) => false
   | (STRING(_)) => false
@@ -43,8 +46,6 @@ CPPGrmTokens
       struct
 
 
-fun pgm_PROD_1_ACT (FULL_SPAN : (Lex.pos * Lex.pos)) = 
-  (Ast.PNone)
 fun exp_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
   (Ast.ENum NUM)
 fun exp_PROD_2_ACT (STRING, STRING_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
@@ -53,6 +54,14 @@ fun exp_PROD_3_ACT (PLUS, exp1, exp2, PLUS_SPAN : (Lex.pos * Lex.pos), exp1_SPAN
   (SOME Ast.EPlus)
 fun exp_PROD_4_ACT (exp1, exp2, TIMES, exp1_SPAN : (Lex.pos * Lex.pos), exp2_SPAN : (Lex.pos * Lex.pos), TIMES_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
   (SOME Ast.ETimes)
+fun ctype_PROD_1_ACT (NUM, NUM_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.CInt NUM )
+fun ctype_PROD_2_ACT (STRING, STRING_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.CString STRING)
+fun defn_PROD_1_ACT (ID, SEMICOLON, ctype, ID_SPAN : (Lex.pos * Lex.pos), SEMICOLON_SPAN : (Lex.pos * Lex.pos), ctype_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.DDecl ( ctype , ( Ast.CId ID ) ) )
+fun pgm_PROD_1_ACT (SR, SR_SPAN : (Lex.pos * Lex.pos), FULL_SPAN : (Lex.pos * Lex.pos)) = 
+  ( Ast.Pgm SR )
       end (* UserCode *)
 
     structure Err = AntlrErrHandler(
@@ -113,6 +122,10 @@ fun matchEOF strm = (case (lex(strm))
  of (Tok.EOF, span, strm') => ((), span, strm')
   | _ => fail()
 (* end case *))
+fun matchSEMICOLON strm = (case (lex(strm))
+ of (Tok.SEMICOLON, span, strm') => ((), span, strm')
+  | _ => fail()
+(* end case *))
 fun matchTIMES strm = (case (lex(strm))
  of (Tok.TIMES, span, strm') => ((), span, strm')
   | _ => fail()
@@ -134,7 +147,7 @@ fun matchNUM strm = (case (lex(strm))
   | _ => fail()
 (* end case *))
 
-val (pgm_NT, exp_NT) = 
+val (exp_NT, exp_NT) = 
 let
 fun exp_NT (strm) = let
       fun exp_PROD_1 (strm) = let
@@ -176,23 +189,17 @@ fun exp_NT (strm) = let
           | _ => fail()
         (* end case *))
       end
-fun pgm_NT (strm) = let
-      val FULL_SPAN = (Err.getPos(strm), Err.getPos(strm))
-      in
-        (UserCode.pgm_PROD_1_ACT (FULL_SPAN : (Lex.pos * Lex.pos)), FULL_SPAN,
-          strm)
-      end
 in
-  (pgm_NT, exp_NT)
+  (exp_NT, exp_NT)
 end
-val pgm_NT =  fn s => unwrap (Err.launch (eh, lexFn, pgm_NT , true) s)
-val exp_NT =  fn s => unwrap (Err.launch (eh, lexFn, exp_NT , false) s)
+val exp_NT =  fn s => unwrap (Err.launch (eh, lexFn, exp_NT , true) s)
+val exp_NT =  fn s => unwrap (Err.launch (eh, lexFn, exp_NT , true) s)
 
-in (pgm_NT, exp_NT) end
+in (exp_NT, exp_NT) end
   in
-fun parse lexFn  s = let val (pgm_NT, exp_NT) = mk lexFn in pgm_NT s end
+fun parse lexFn  s = let val (exp_NT, exp_NT) = mk lexFn in exp_NT s end
 
-fun parseexp lexFn  s = let val (pgm_NT, exp_NT) = mk lexFn in exp_NT s end
+fun parseexp lexFn  s = let val (exp_NT, exp_NT) = mk lexFn in exp_NT s end
 
   end
 

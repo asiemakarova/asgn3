@@ -18,8 +18,8 @@ struct
                | EId of string
                | EPlus of exp*exp
                | ETimes of exp*exp
-
-
+(*               | EFunc of exp list
+*)
   (*  The type of programs.
   *   
   *   You must have this type in your solution.  Do not use the PNone
@@ -33,19 +33,18 @@ DDecl for a variable declaration.
                     | Comment of 
                     | EOLComment of 
                     | BlockComment of string
-                    | PreproDir of string
+                    | PreproDir of string int x = 7;
                     | LongProgram of program+
 *)
-  
-  type id = string
-  datatype defn = DDecl of id*exp
+
+  datatype cid = CId of string 
+  datatype ctype = CString of string
+                |  CInt of int
+
+  datatype defn = DDecl of ctype*cid (*where is id defined*)
   datatype program = Pgm of defn list
-(*  datatype ctype = CString of string
-                  |CInt of int
-                  |
- *)
 
-
+ 
   (*  ********
   *   'a -> string conversion functions.
   *)
@@ -65,7 +64,6 @@ DDecl for a variable declaration.
            "ETimes(" ^ (expToString e0) ^ ", " ^ (expToString e1) ^ ")"
        | ENum(n) =>
            "ENum(" ^ (Int.toString n) ^ ")"
-
 
 
   (*  programToString p = a string representation of p.

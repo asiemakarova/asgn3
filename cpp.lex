@@ -27,6 +27,7 @@
 
 "+"               =>	( T.PLUS ) ;
 "*"               =>	( T.TIMES ) ;
+";"				  =>	( T.SEMICOLON ) ;
 {num}             =>	( T.NUM ( valOf (Int.fromString yytext)) ) ;
 {id}              =>	( T.ID yytext ) ;
 {ws}              =>	( skip() ) ;
